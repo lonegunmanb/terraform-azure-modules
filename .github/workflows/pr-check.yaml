@@ -19,11 +19,10 @@ jobs:
       - uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1 # 2.0.3
       - name: setup terragrunt
         run: |
-          apt install -y curl git
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
-          (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /root/.profile
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          HOMEBREW_NO_AUTO_UPDATE=1 brew install terragrunt
+          sudo apt install -y curl git
+          sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
+          sudo eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          HOMEBREW_NO_AUTO_UPDATE=1 sudo brew install terragrunt
       - name: plan
         run: |
           az login --identity --username $MSI_ID > /dev/null
