@@ -144,10 +144,21 @@ resource "azapi_update_resource" "identity" {
 #  resource_id = azapi_resource.oneespool_fw[each.value].id
 #}
 
+data "azurerm_resource_group" "runner_state" {
+  name = "bambrane-runner-state"
+}
+
 data azurerm_user_assigned_identity bambrane_operator {
   name                = "bambrane_operator"
-  resource_group_name = "bambrane-runner-state"
+  resource_group_name = data.azurerm_resource_group.runner_state.name
 }
+
+data "azurerm_subnet" "bambrane_onees_pool" {
+  name                 = "runner"
+  virtual_network_name = "control-plane-meta-controller"
+  resource_group_name  = data.azurerm_resource_group.runner_state.name
+}
+
 
 resource "azapi_resource" "onees_meta_pool" {
   parent_id = azurerm_resource_group.onees_runner_pool.id
@@ -159,7 +170,7 @@ resource "azapi_resource" "onees_meta_pool" {
         url  = "https://github.com/lonegunmanb/terraform-azure-modules"
       }
       networkProfile = {
-        natGatewayIpAddressCount = 1
+        subnetId = data.azurerm_subnet.bambrane_onees_pool.id
       }
       vmProviderProperties = {
         VssAdminPermissions = "CreatorOnly"

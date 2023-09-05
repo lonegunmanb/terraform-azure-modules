@@ -1,5 +1,5 @@
 resource "azurerm_virtual_network" "vnet" {
-  address_space       = ["192.168.128.0/24"]
+  address_space       = ["192.168.0.0/16"]
   location            = azurerm_resource_group.state_rg.location
   name                = "control-plane-meta-controller"
   resource_group_name = azurerm_resource_group.state_rg.name
@@ -11,6 +11,24 @@ resource "azurerm_subnet" "runner" {
   resource_group_name  = azurerm_resource_group.state_rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   service_endpoints    = ["Microsoft.Storage"]
+}
+
+resource "azurerm_subnet" "bambrane_onees_pool" {
+  address_prefixes     = ["192.168.100.0/24"]
+  name                 = "runner"
+  resource_group_name  = azurerm_resource_group.state_rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+
+  delegation {
+    name = "delegation"
+
+    service_delegation {
+      name    = "Microsoft.CloudTest/hostedpools"
+      actions = [
+        "Microsoft.Network/virtualNetworks/subnets/join/action",
+      ]
+    }
+  }
 }
 
 locals {
