@@ -27,3 +27,7 @@ resource "azuread_directory_role_assignment" "role_binding" {
     replace_triggered_by = [terraform_data.roles_keeper]
   }
 }
+
+data "azuread_service_principal" "onees_rm" {
+  display_name = "1ES Resource Management"
+}
