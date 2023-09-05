@@ -1,0 +1,38 @@
+name: Pre Pull Request Check
+on:
+  pull_request:
+    types: [ 'opened', 'synchronize', 'reopened']
+    paths:
+      - '.github/**'
+      - '**.tf'
+      - '**.tf.json'
+      - '.github/workflows/**'
+
+jobs:
+  prepr-check:
+    runs-on: [self-hosted, 1ES.Pool=terraform-azure-modules]
+    environment:
+      name: tfstate
+    steps:
+      - name: checkout
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # 3.6.0
+      - uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1 # 2.0.3
+      - name: Check terragrunt HCL
+        uses: gruntwork-io/terragrunt-action@1f9053d47a9645fe54d5de63ea2461083e0dc8f9 # 1.0.8
+      - name: plan
+        run: |
+          az login --identity --username $MSI_ID > /dev/null
+          export ARM_SUBSCRIPTION_ID=$(az login --identity --username $MSI_ID | jq -r '.[0] | .id')
+          export ARM_TENANT_ID=$(az login --identity --username $MSI_ID | jq -r '.[0] | .tenantId')
+          export ARM_USE_MSI=true
+          sh scripts/terragrunt-init.sh
+          sh scripts/terragrunt-plan.sh
+      - name: Upload plan file
+        run: |
+          az storage blob upload -f ./tfplan --account-name tfmodrunnerstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} --no-progress --overwrite --auth-mode login
+      - name: 'Comment on PR'
+        run: |
+          export PR_NUMBER=$(cat change | jq -r '.pr')
+          msg=$(cat log.txt)
+          jq -n --arg msg "$msg" '{body: $msg}' > body.txt
+          curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments -d @body.txt
