@@ -17,8 +17,13 @@ jobs:
       - name: checkout
         uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # 3.6.0
       - uses: hashicorp/setup-terraform@633666f66e0061ca3b725c73b2ec20cd13a8fdd1 # 2.0.3
-      - name: Check terragrunt HCL
-        uses: gruntwork-io/terragrunt-action@1f9053d47a9645fe54d5de63ea2461083e0dc8f9 # 1.0.8
+      - name: setup terragrunt
+        run: |
+          apt install -y curl git
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" < /dev/null
+          (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /root/.profile
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          HOMEBREW_NO_AUTO_UPDATE=1 brew install terragrunt
       - name: plan
         run: |
           az login --identity --username $MSI_ID > /dev/null
