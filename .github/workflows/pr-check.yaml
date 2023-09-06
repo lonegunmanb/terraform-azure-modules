@@ -8,6 +8,9 @@ on:
       - '**.tf.json'
       - '.github/workflows/**'
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   prepr-check:
     runs-on: [self-hosted, 1ES.Pool=terraform-azure-modules]
@@ -44,6 +47,6 @@ jobs:
       - name: 'Comment on PR'
         run: |
           terraform show -no-color tfplan > body.txt
-          gh auth login --with-token ${{ secrets.GITHUB_TOKEN }}
+          gh auth login
           gh pr comment ${{ github.event.number }} --body-file "body.txt" --repo "${{ github.repository }}"
 #          curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments -d @body.txt
