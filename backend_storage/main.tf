@@ -16,7 +16,7 @@ resource "azurerm_storage_account" "state" {
   location                      = azurerm_resource_group.state_rg.location
   name                          = "tfmod1espoolstatestorage"
   resource_group_name           = azurerm_resource_group.state_rg.name
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   customer_managed_key {
     key_vault_key_id          = azurerm_key_vault_key.storage_encryption_key.id

@@ -169,7 +169,7 @@ resource "azapi_resource" "onees_meta_pool" {
         url  = "https://github.com/lonegunmanb/terraform-azure-modules"
       }
       networkProfile = {
-        subnetId = data.azurerm_subnet.bambrane_onees_pool.id
+        natGatewayIpAddressCount = 1
       }
       vmProviderProperties = {
         VssAdminPermissions = "CreatorOnly"
