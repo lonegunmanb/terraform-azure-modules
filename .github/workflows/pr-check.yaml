@@ -47,7 +47,7 @@ jobs:
           run:
             terraform show -no-color tfplan
       - name: Comment PR
-        uses: thollander/actions-comment-pull-request@v2
+        uses: thollander/actions-comment-pull-request@d61db783da9abefc3437960d0cce08552c7c004f # 2.4.2
         with:
           message: |
             ```
