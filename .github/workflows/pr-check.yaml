@@ -39,7 +39,7 @@ jobs:
           sh scripts/terragrunt-plan.sh
       - name: Upload plan file
         run: |
-          az storage blob upload -f ./tfplan --account-name tfmod1espoolstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} --no-progress --overwrite --auth-mode login
+          az storage blob upload -f ./tfplan --account-name tfmod1espoolstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} --tier Cool --no-progress --overwrite --auth-mode login
       - name: Show Terraform Plan
         id: tfshow
         uses: mathiasvr/command-output@34408ea3d0528273faff3d9e201761ae96106cd0 # 2.0.0
