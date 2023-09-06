@@ -73,6 +73,20 @@ resource "azurerm_private_endpoint" "blob" {
   }
 }
 
+resource "azurerm_private_endpoint" "provision_script_blob" {
+  name                = "ps_blob"
+  location            = azurerm_resource_group.state_rg.location
+  resource_group_name = azurerm_resource_group.state_rg.name
+  subnet_id           = azurerm_subnet.runner.id
+
+  private_service_connection {
+    name                           = "blob"
+    private_connection_resource_id = azurerm_storage_account.bambrane_provision_script.id
+    subresource_names              = ["blob"]
+    is_manual_connection           = false
+  }
+}
+
 resource "azurerm_private_dns_a_record" "private" {
   name                = azurerm_storage_account.state.name
   records             = [azurerm_private_endpoint.blob.private_service_connection[0].private_ip_address]
@@ -84,6 +98,22 @@ resource "azurerm_private_dns_a_record" "private" {
 resource "azurerm_private_dns_cname_record" "public" {
   name                = azurerm_storage_account.state.name
   record              = azurerm_private_dns_a_record.private.fqdn
+  resource_group_name = azurerm_private_dns_a_record.private.resource_group_name
+  ttl                 = 600
+  zone_name           = azurerm_private_dns_zone.public_endpoints.name
+}
+
+resource "azurerm_private_dns_a_record" "private_provision_script" {
+  name                = azurerm_storage_account.bambrane_provision_script.name
+  records             = [azurerm_private_endpoint.provision_script_blob.private_service_connection[0].private_ip_address]
+  resource_group_name = azurerm_resource_group.state_rg.name
+  ttl                 = 600
+  zone_name           = azurerm_private_dns_zone.private_links.name
+}
+
+resource "azurerm_private_dns_cname_record" "public_provision_script" {
+  name                = azurerm_storage_account.bambrane_provision_script.name
+  record              = azurerm_private_dns_a_record.private_provision_script.fqdn
   resource_group_name = azurerm_private_dns_a_record.private.resource_group_name
   ttl                 = 600
   zone_name           = azurerm_private_dns_zone.public_endpoints.name

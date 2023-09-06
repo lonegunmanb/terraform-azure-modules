@@ -159,7 +159,6 @@ data "azurerm_subnet" "bambrane_onees_pool" {
   resource_group_name  = data.azurerm_resource_group.runner_state.name
 }
 
-
 resource "azapi_resource" "onees_meta_pool" {
   parent_id = azurerm_resource_group.onees_runner_pool.id
   type      = "Microsoft.CloudTest/hostedpools@2020-05-07"
