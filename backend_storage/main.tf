@@ -82,6 +82,9 @@ resource "azurerm_storage_account" "bambrane_provision_script" {
   }
 }
 
+#Azure Active Directory authorization must be enabled for your blob storage container.
+#Authentication method must be set to Azure AD User Account for your container
+#For now I cannot find the corresponding Terraform argument yet, I set this argument via GUI.
 resource "azurerm_storage_container" "provision_script" {
   name                 = "onees-provison-script"
   storage_account_name = azurerm_storage_account.bambrane_provision_script.name
