@@ -181,7 +181,7 @@ resource "azapi_resource" "onees_meta_pool" {
       maxPoolSize = 3
       images      = [
         {
-          imageName            = "bambrane-controller"
+          imageName            = "bambrane-runner"
           subscriptionId       = data.azurerm_client_config.current.subscription_id
           poolBufferPercentage = "100"
         }

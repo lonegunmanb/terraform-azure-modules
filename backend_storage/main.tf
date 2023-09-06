@@ -16,7 +16,7 @@ resource "azurerm_storage_account" "state" {
   location                      = azurerm_resource_group.state_rg.location
   name                          = "tfmod1espoolstatestorage"
   resource_group_name           = azurerm_resource_group.state_rg.name
-  public_network_access_enabled = false
+  public_network_access_enabled = true
 
   customer_managed_key {
     key_vault_key_id          = azurerm_key_vault_key.storage_encryption_key.id
@@ -59,34 +59,26 @@ resource "azurerm_storage_container" "telemetry" {
   }
 }
 
-resource "azurerm_storage_container" "provision_script" {
-  name                 = "onees-provison-script"
-  storage_account_name = azurerm_storage_account.state.name
+#resource "azurerm_storage_container" "provision_script" {
+#  name                 = "onees-provison-script"
+#  storage_account_name = azurerm_storage_account.state.name
+#}
+#
+#resource "azurerm_storage_blob" "provision_script" {
+#  name                   = "Setup.sh"
+#  storage_account_name   = azurerm_storage_account.state.name
+#  storage_container_name = azurerm_storage_container.provision_script.name
+#  type                   = "Block"
+#  access_tier            = "Cool"
+#  content_type           = "text/x-sh"
+#  source_content         = "echo MSI_ID=\"${azurerm_user_assigned_identity.bambrane_operator.principal_id}\" >> /etc/environment"
+#}
 
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "azurerm_storage_blob" "provision_script" {
-  name                   = "Setup.sh"
-  storage_account_name   = azurerm_storage_account.state.name
-  storage_container_name = azurerm_storage_container.provision_script.name
-  type                   = "Block"
-  access_tier            = "Cool"
-  content_type           = "text/x-sh"
-  source_content         = "echo MSI_ID=\"${azurerm_user_assigned_identity.bambrane_operator.principal_id}\" >> /etc/environment"
-
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-resource "azurerm_role_assignment" "onees_rm_blob_reader" {
-  principal_id         = data.azuread_service_principal.onees_rm.object_id
-  scope                = azurerm_storage_account.state.id
-  role_definition_name = "Storage Blob Data Reader"
-}
+#resource "azurerm_role_assignment" "onees_rm_blob_reader" {
+#  principal_id         = data.azuread_service_principal.onees_rm.object_id
+#  scope                = azurerm_storage_account.state.id
+#  role_definition_name = "Storage Blob Data Reader"
+#}
 
 resource "azurerm_user_assigned_identity" "bambrane_operator" {
   location            = azurerm_resource_group.state_rg.location
