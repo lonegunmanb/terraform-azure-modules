@@ -35,7 +35,5 @@ jobs:
           az storage blob upload -f ./tfplan --account-name tfmod1espoolstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} --no-progress --overwrite --auth-mode login
       - name: 'Comment on PR'
         run: |
-          export PR_NUMBER=$(cat change | jq -r '.pr')
-          msg=$(cat log.txt)
-          jq -n --arg msg "$msg" '{body: $msg}' > body.txt
-          curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/$PR_NUMBER/comments -d @body.txt
+          terraform show -no-color tfplan > body.txt
+          curl -s -X POST -H "Accept: application/vnd.github+json" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.number }}/comments -d @body.txt
