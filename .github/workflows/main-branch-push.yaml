@@ -28,8 +28,8 @@ jobs:
         if: steps.PR.outputs.number != ''
         run: |
           sh scripts/terragrunt-init.sh
-          terragrunt apply -auto-approve -compact-warnings tfplan
+          terragrunt apply -auto-approve -input=false --compact-warnings tfplan
       - name: Delete tfplan file
         if: steps.PR.outputs.number != ''
         run: |
-          az storage blob delete --account-name tfmodrunnerstatestorage --auth-mode login --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{steps.PR.outputs.number}}
+          az storage blob delete --account-name tfmod1espoolstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{steps.PR.outputs.number}} --auth-mode login
