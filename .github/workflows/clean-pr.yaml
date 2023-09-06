@@ -13,7 +13,7 @@ jobs:
           az login --identity --username $MSI_ID > /dev/null
           echo "========> github.event.pull_request.merged is:"
           echo ${{github.event.pull_request.merged}}
-          az storage blob delete --account-name tfmodrunnerstatestorage --auth-mode login --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} || echo "tfplan file cleanup error but we tolerate it."
+          az storage blob delete --account-name tfmod1espoolstatestorage --container-name azure-verified-tfmod-pull-request-plans --name tfplan_${{ github.event.number }} --auth-mode login || echo "tfplan file cleanup error but we tolerate it."
       - name: PR comment with reactions
         if: github.event.pull_request.merged != 'true'
         uses: thollander/actions-comment-pull-request@8a3fad13c20088e9eb0805666b9fe49509d2fec8 # 1.6.0
