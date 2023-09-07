@@ -51,3 +51,4 @@ jobs:
             tfplan file applied and purged ! :wave:
           reactions: rocket
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pr_number: ${{ steps.PR.outputs.number }}
