@@ -31,6 +31,7 @@ locals {
     "https://github.com/Azure/terraform-azure-storage-account",
     "https://github.com/WodansSon/terraform-azurerm-cdn-frontdoor",
     "https://github.com/lonegunmanb/terraform-azurerm-aks",
+    
   ]
   repos_fw = [
 #    "https://github.com/lonegunmanb/terraform-azurerm-aks",
